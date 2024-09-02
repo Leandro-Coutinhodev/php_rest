@@ -20,7 +20,7 @@ class TesteController
 
     $data = $repo->getAll();
     $response = JsonUtil::jsonResponse($data);
-    echo RoutesUtil::getIdRequest();
+
   }
 
   public function getOne()
