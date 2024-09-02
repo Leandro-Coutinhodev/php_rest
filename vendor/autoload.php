@@ -1,7 +1,6 @@
 <?php
 /**
  * AUTOLOAD DE CLASSES
- * @param $class
  */
 
 function autoload($class)
@@ -10,7 +9,7 @@ function autoload($class)
 
   $file = DIR_APP . DS . $classPath;
 
-  // Verifica se o arquivo existe e não é um diretório
+
   if (file_exists($file) && !is_dir($file)) {
     include $file;
   } else {
