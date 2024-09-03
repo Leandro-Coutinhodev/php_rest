@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 use App\Utils\ConstantsUtil;
+use App\Utils\JsonUtil;
 use PDO;
 
 class DbRepository
@@ -9,6 +10,12 @@ class DbRepository
 
   protected $conn;
 
+
+  public function save()
+  {
+    // Trabalhar aqui posteriormente
+
+  }
   public function getAll()
   {
 
@@ -28,35 +35,76 @@ class DbRepository
         return $result->fetchAll(PDO::FETCH_ASSOC);
       } else {
 
-        echo ConstantsUtil::MSG_ERRO_SEM_RETORNO;
+        echo ConstantsUtil::MSG_RETORNO_NAO_AFETADO;
       }
+
+    } else {
+      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+    }
+  }
+
+  public function getById(int $id)
+  {
+
+    if (static::TABLE && static::ID) {
+      $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE ' . static::ID . ' = :id;';
+      $stmt = $this->conn->prepare($Sql);
+      $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+      try {
+
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      } catch (\PDOException $e) {
+
+        throw new \Exception($e->getMessage());
+      }
+
+      if (count($result) > 0) {
+
+        return $result;
+      } else {
+
+        JsonUtil::jsonResponse([
+          'retorno' => ConstantsUtil::MSG_RETORNO_NAO_AFETADO
+        ]);
+      }
+
+    } else {
+      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
 
     }
   }
 
-  public function getById($id)
+  public function delete(int $id)
   {
 
-    $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE id = :id;';
-    $stmt = $this->conn->prepare($Sql);
-    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-    try {
+    if (static::TABLE && static::ID) {
+      $Sql = 'DELETE FROM ' . static::TABLE . ' WHERE ' . static::ID . ' = :id;';
+      $this->conn->beginTransaction();
+      try {
+        $stmt = $this->conn->prepare($Sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
-      $stmt->execute();
-      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $this->conn->commit();
+      } catch (\PDOException $e) {
+        throw new \Exception($e->getMessage());
+      }
 
-    } catch (\PDOException $e) {
+      if ($stmt->rowCount() > 0) {
 
-      throw new \Exception($e->getMessage());
-    }
+        JsonUtil::jsonResponse([
+          'retorno' => ConstantsUtil::MSG_RETORNO_DELETADO_SUCESSO
+        ]);
+      } else {
 
-    if (count($result) > 0) {
-
-      return $result;
+        JsonUtil::jsonResponse([
+          'retorno' => ConstantsUtil::MSG_RETORNOI_DELETADO_ERRO
+        ]);
+      }
     } else {
-
-      echo ConstantsUtil::MSG_ERRO_SEM_RETORNO;
+      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
     }
-
   }
 }

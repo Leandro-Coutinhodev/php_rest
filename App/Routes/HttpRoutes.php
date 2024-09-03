@@ -21,5 +21,6 @@ class HttpRoutes
     Routes::put('/teste/lista', [TesteController::class, 'update']);
 
     //REQUISIÇÕES DELETE AQUI:
+    Routes::delete('/usuarios/excluir/{id}', [UsuarioController::class, 'excluirUsuario']);
   }
 }

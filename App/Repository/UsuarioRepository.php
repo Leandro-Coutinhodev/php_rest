@@ -3,12 +3,15 @@
 namespace App\Repository;
 use App\Db\ConnectionDb;
 use App\Models\UserModel;
+use App\Utils\ConstantsUtil;
 use PDO;
 use PDOException;
 
 class UsuarioRepository extends DbRepository
 {
   protected const TABLE = 'usuario';
+  protected const ID = 'id';
+  protected const COLUMNS = ['nome', 'idade'];
 
   public function __construct()
   {
@@ -32,7 +35,8 @@ class UsuarioRepository extends DbRepository
       throw new \Exception($e->getMessage());
     }
     echo json_encode([
-      'msg' => 'sucess'
+      'retorno' => ConstantsUtil::MSG_RETORNO_SALVO_SUCESSO
     ]);
   }
+
 }

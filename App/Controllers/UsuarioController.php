@@ -34,4 +34,10 @@ class UsuarioController
     $data = $usuario->getById(RoutesUtil::getIdRequest());
     JsonUtil::jsonResponse($data);
   }
+
+  public function excluirUsuario()
+  {
+    $usuario = new UsuarioRepository();
+    $usuario->delete(RoutesUtil::getIdRequest());
+  }
 }
