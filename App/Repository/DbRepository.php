@@ -89,7 +89,10 @@ class DbRepository
         $stmt->execute();
         $this->conn->commit();
       } catch (\PDOException $e) {
+
+        $this->conn->rollBack();
         throw new \Exception($e->getMessage());
+
       }
 
       if ($stmt->rowCount() > 0) {
