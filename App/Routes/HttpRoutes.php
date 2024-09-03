@@ -1,6 +1,7 @@
 <?php
 namespace App\Routes;
 use App\Controllers\TesteController;
+use App\Controllers\UsuarioController;
 use App\Routes\Routes;
 
 class HttpRoutes
@@ -8,14 +9,16 @@ class HttpRoutes
   public function __construct()
   {
     //REQUISIÇÕES GET AQUI:
-    $router = Routes::get('/', [TesteController::class, 'index']);
-    $router = Routes::get('/usuario/retornar/1', [TesteController::class, 'getOne']);
+    Routes::get('/usuarios/listar', [UsuarioController::class, 'retornarUsuarios']);
+    Routes::get('/usuarios/listar/{id}', [UsuarioController::class, 'retornarUsuario']);
+
 
     //REQUISIÇÕES POST AQUI:
-    $router = Routes::post('/usuario/criar', [TesteController::class, 'new']);
+    Routes::post('/usuarios/criar', [UsuarioController::class, 'novoUsuario']);
+    ;
 
     //REQUISIÇÕES PUT AQUI:
-    $router = Routes::put('/teste/lista', [TesteController::class, 'update']);
+    Routes::put('/teste/lista', [TesteController::class, 'update']);
 
     //REQUISIÇÕES DELETE AQUI:
   }

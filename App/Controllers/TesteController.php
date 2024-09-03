@@ -19,15 +19,14 @@ class TesteController
     $repo = new UsuarioRepository();
 
     $data = $repo->getAll();
-    $response = JsonUtil::jsonResponse($data);
-    echo RoutesUtil::getIdRequest();
+    JsonUtil::jsonResponse($data);
   }
 
   public function getOne()
   {
     $repo = new UsuarioRepository();
     $data = $repo->getById(RoutesUtil::getIdRequest());
-    $response = JsonUtil::jsonResponse($data);
+    JsonUtil::jsonResponse($data);
   }
 
   public function new()

@@ -54,6 +54,8 @@ abstract class Routes
       $controllerInstance->$actionMethod();
 
 
+    } else {
+      http_response_code(404);
     }
   }
 }

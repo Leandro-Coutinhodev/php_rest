@@ -5,5 +5,11 @@ use Src\Teste\Teste;
 
 include __DIR__ . '/bootstrap/bootstrap.php';
 
-$start = Routes::setRoutes();
-$start = Routes::dispatch();
+//inicia a aplicação
+try {
+  Routes::setRoutes();
+  Routes::dispatch();
+} catch (Exception $e) {
+
+  throw new Exception($e->getMessage());
+}

@@ -11,18 +11,29 @@ class RoutesUtil
   {
     $uri = $_SERVER['REQUEST_URI'];
     $uriparts = explode('/', trim($uri, '/'));
-    if (count($uriparts) === 3 && $uriparts[2] != null) {
+    if (count($uriparts) > 1 && end($uriparts) != null) {
       try {
-        return intval($uriparts[2]);
+        return intval(end($uriparts));
       } catch (\Exception $e) {
         throw new \Exception($e->getMessage());
       }
     }
   }
 
+
   public static function getUriRequest()
   {
-    return $_SERVER['REQUEST_URI'];
+    $uri = $_SERVER['REQUEST_URI'];
+    $uriparts = explode('/', trim($uri, '/'));
+    if (count($uriparts) > 2 && end($uriparts) != null) {
+
+      $replace = str_replace('/' . end($uriparts), '/{id}', $uri);
+      return $replace;
+
+    } else {
+      return $uri;
+    }
+
   }
 
   public static function getMethodRequest()
