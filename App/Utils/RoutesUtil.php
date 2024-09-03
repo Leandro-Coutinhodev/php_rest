@@ -11,7 +11,11 @@ class RoutesUtil
   {
     $uri = $_SERVER['REQUEST_URI'];
     $uriparts = explode('/', trim($uri, '/'));
+<<<<<<< HEAD
     if (count($uriparts) > 1 && end($uriparts) != null) {
+=======
+    if (count($uriparts) >= 3 && $uriparts[2] != null) {
+>>>>>>> 29d966bddadfc47b02f73beb8216c7608fd5345b
       try {
         return intval(end($uriparts));
       } catch (\Exception $e) {

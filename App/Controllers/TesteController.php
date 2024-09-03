@@ -19,7 +19,12 @@ class TesteController
     $repo = new UsuarioRepository();
 
     $data = $repo->getAll();
+<<<<<<< HEAD
     JsonUtil::jsonResponse($data);
+=======
+    $response = JsonUtil::jsonResponse($data);
+
+>>>>>>> 29d966bddadfc47b02f73beb8216c7608fd5345b
   }
 
   public function getOne()
