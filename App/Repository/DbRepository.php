@@ -3,7 +3,9 @@
 namespace App\Repository;
 use App\Utils\ConstantsUtil;
 use App\Utils\JsonUtil;
+use Exception;
 use PDO;
+use PDOException;
 
 class DbRepository
 {
@@ -11,9 +13,60 @@ class DbRepository
   protected $conn;
 
 
-  public function save()
+  public function save(object $object)
   {
     // Trabalhar aqui posteriormente
+    if (static::TABLE && static::COLUMNS) {
+
+      $columns = '';
+      $valparams = '';
+      foreach (static::COLUMNS as $column) {
+        $columns .= ', ' . $column;
+        $valparams .= ', :' . $column;
+      }
+
+      $columns = ltrim($columns, ', ');
+      $valparams = ltrim($valparams, ', ');
+      $Sql = 'INSERT INTO ' . static::TABLE . ' (' . $columns . ') VALUES (' . $valparams . ');';
+      $this->conn->beginTransaction();
+      try {
+
+        $stmt = $this->conn->prepare($Sql);
+        foreach (static::COLUMNS as $column) {
+
+          $method = 'get' . ucfirst($column);
+          $value = $object->$method();
+
+          $type = PDO::PARAM_STR;
+
+          if (is_int($value)) {
+            $type = PDO::PARAM_INT;
+          } elseif (is_bool($value)) {
+            $type = PDO::PARAM_BOOL;
+          } elseif (is_null($value)) {
+            $type = PDO::PARAM_NULL;
+          }
+
+          $stmt->bindValue(':' . $column, $value, $type);
+
+        }
+
+        $stmt->execute();
+        $this->conn->commit();
+
+      } catch (PDOException $e) {
+        $this->conn->rollBack();
+        throw new Exception('Erro: ' . $e->getMessage());
+      }
+
+      if ($stmt->rowCount() > 0) {
+        http_response_code(200);
+        return true;
+      } else {
+        http_response_code(400);
+        return false;
+      }
+    }
 
   }
   public function getAll()

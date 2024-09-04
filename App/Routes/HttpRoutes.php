@@ -11,11 +11,12 @@ class HttpRoutes
     //REQUISIÇÕES GET AQUI:
     Routes::get('/usuarios/listar', [UsuarioController::class, 'retornarUsuarios']);
     Routes::get('/usuarios/listar/{id}', [UsuarioController::class, 'retornarUsuario']);
+    Routes::post('/', [TesteController::class, 'index']);
 
 
     //REQUISIÇÕES POST AQUI:
     Routes::post('/usuarios/criar', [UsuarioController::class, 'novoUsuario']);
-    ;
+
 
     //REQUISIÇÕES PUT AQUI:
     Routes::put('/teste/lista', [TesteController::class, 'update']);

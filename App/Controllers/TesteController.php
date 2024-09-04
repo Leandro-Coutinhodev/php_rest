@@ -15,12 +15,16 @@ class TesteController
      * LEIA! melhorar a estrutura da api: (tratamento de erros, pegar id da requisição, etc...) 
      */
 
-    $data = [];
-    $repo = new UsuarioRepository();
 
-    $data = $repo->getAll();
+    $data = JsonUtil::decodeRequestBody();
+    $user = new UserModel();
+    $user->setNome($data['nome']);
+    $user->setIdade($data['idade']);
+    $repo = new UsuarioRepository();
+    $repo->save($user);
+    /*$data = $repo->getAll();
     JsonUtil::jsonResponse($data);
-    JsonUtil::jsonResponse($data);
+    JsonUtil::jsonResponse($data);*/
   }
 
   public function getOne()
