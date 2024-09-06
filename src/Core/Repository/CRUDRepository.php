@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Repository;
-use App\Utils\ConstantsUtil;
-use App\Utils\JsonUtil;
+namespace Core\Repository;
 use Exception;
 use PDO;
 use PDOException;
+use Support\Utils\ConstantsUtil;
+use Support\Utils\JsonUtil;
 
-class DbRepository
+class CRUDRepository
 {
 
   protected $conn;
@@ -78,9 +78,9 @@ class DbRepository
       try {
 
         $result = $this->conn->query($Sql);
-      } catch (\PDOException $e) {
+      } catch (PDOException $e) {
 
-        throw new \Exception($e->getMessage());
+        throw new Exception($e->getMessage());
       }
 
       if ($result->rowCount() > 0) {
@@ -92,7 +92,7 @@ class DbRepository
       }
 
     } else {
-      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
     }
   }
 
@@ -108,9 +108,9 @@ class DbRepository
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-      } catch (\PDOException $e) {
+      } catch (PDOException $e) {
 
-        throw new \Exception($e->getMessage());
+        throw new Exception($e->getMessage());
       }
 
       if (count($result) > 0) {
@@ -124,7 +124,7 @@ class DbRepository
       }
 
     } else {
-      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
 
     }
   }
@@ -141,10 +141,10 @@ class DbRepository
 
         $stmt->execute();
         $this->conn->commit();
-      } catch (\PDOException $e) {
+      } catch (PDOException $e) {
 
         $this->conn->rollBack();
-        throw new \Exception($e->getMessage());
+        throw new Exception($e->getMessage());
 
       }
 
@@ -160,7 +160,7 @@ class DbRepository
         ]);
       }
     } else {
-      throw new \Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
     }
   }
 }

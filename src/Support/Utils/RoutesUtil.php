@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace Support\Utils;
 
 class RoutesUtil
 {

@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Repository;
-use App\Db\ConnectionDb;
 use App\Models\UserModel;
-use App\Utils\ConstantsUtil;
 use PDO;
 use PDOException;
+use Core\Database\ConnectionDb;
+use Core\Repository\CRUDRepository;
+use Support\Utils\ConstantsUtil;
 
-class UsuarioRepository extends DbRepository
+class UsuarioRepository extends CRUDRepository
 {
   protected const TABLE = 'usuario';
   protected const ID = 'id';

@@ -3,8 +3,9 @@
 namespace App\Controllers;
 use App\Models\UserModel;
 use App\Repository\UsuarioRepository;
-use App\Utils\JsonUtil;
-use App\Utils\RoutesUtil;
+use Support\Utils\JsonUtil;
+use Support\Utils\RoutesUtil;
+
 
 class TesteController
 {

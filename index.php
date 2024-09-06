@@ -1,9 +1,7 @@
 <?php
+use Core\Routes\Routes;
 
-use App\Routes\Routes;
-use Src\Teste\Teste;
-
-include __DIR__ . '/bootstrap/bootstrap.php';
+require_once 'bootstrap/bootstrap.php';
 
 //inicia a aplicação
 try {

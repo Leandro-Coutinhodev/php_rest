@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Routes;
-use App\Utils\RoutesUtil;
+namespace Core\Routes;
+use DirectoryIterator;
+use Support\Utils\RoutesUtil;
+
+
 
 abstract class Routes
 {
@@ -34,7 +37,24 @@ abstract class Routes
 
   public static function setRoutes()
   {
-    $set = new HttpRoutes();
+    $directory = __DIR__ . '/../../../App/Routes';
+
+    foreach (new DirectoryIterator($directory) as $file) {
+
+      if ($file->isFile() && $file->getExtension() === 'php') {
+
+        $class = 'App\\Routes\\' . $file->getBasename('.php');
+
+        if (is_subclass_of($class, HttpRoutes::class)) {
+
+          $classinstance = new $class();
+          $classinstance->registerRoutes();
+
+        }
+
+      }
+    }
+
   }
 
   public static function dispatch()

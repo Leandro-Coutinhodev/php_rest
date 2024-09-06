@@ -2,12 +2,15 @@
 namespace App\Routes;
 use App\Controllers\TesteController;
 use App\Controllers\UsuarioController;
-use App\Routes\Routes;
+use Core\Routes\HttpRoutes;
+use Core\Routes\Routes;
 
-class HttpRoutes
+
+class http implements HttpRoutes
 {
-  public function __construct()
+  public function registerRoutes(): void
   {
+
     //REQUISIÇÕES GET AQUI:
     Routes::get('/usuarios/listar', [UsuarioController::class, 'retornarUsuarios']);
     Routes::get('/usuarios/listar/{id}', [UsuarioController::class, 'retornarUsuario']);
