@@ -13,6 +13,6 @@ abstract class ConstantsUtil
   public const MSG_RETORNO_SALVO_SUCESSO = 'Salvo com sucesso!';
   public const MSG_RETORNO_ATUALIZADO_SUCESSO = 'Atualizado com sucesso!';
 
-  public const MSG_ERRO_CONSTANTES_DB = 'Constantes não definidas(TABLE, ID, COLUMNS)';
+  public const MSG_ERROR_CONSTANTS_DB = 'Error: Constants TABLE, PK, or COLUMNS not defined.';
 
 }

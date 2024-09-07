@@ -11,7 +11,7 @@ use Support\Utils\ConstantsUtil;
 class UsuarioRepository extends CRUDRepository
 {
   protected const TABLE = 'usuario';
-  protected const ID = 'id';
+  protected const PK = 'id';
   protected const COLUMNS = ['nome', 'idade'];
 
   public function __construct()

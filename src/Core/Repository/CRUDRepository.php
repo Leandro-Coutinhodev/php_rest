@@ -18,16 +18,18 @@ class CRUDRepository
     // Trabalhar aqui posteriormente
     if (static::TABLE && static::COLUMNS) {
 
-      $columns = '';
-      $valparams = '';
-      foreach (static::COLUMNS as $column) {
+      /* $columns = '';
+       $valparams = '';*/
+      /*foreach (static::COLUMNS as $column) {
         $columns .= ', ' . $column;
         $valparams .= ', :' . $column;
-      }
+      }*/
 
-      $columns = ltrim($columns, ', ');
-      $valparams = ltrim($valparams, ', ');
-      $Sql = 'INSERT INTO ' . static::TABLE . ' (' . $columns . ') VALUES (' . $valparams . ');';
+
+      $columns = implode(', ', static::COLUMNS);
+      $valparams = ':' . implode(', :', static::COLUMNS);
+
+      $Sql = "INSERT INTO " . static::TABLE . " ({$columns}) VALUES ({$valparams});";
       $this->conn->beginTransaction();
       try {
 
@@ -66,6 +68,8 @@ class CRUDRepository
         http_response_code(400);
         return false;
       }
+    } else {
+      throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
 
   }
@@ -92,15 +96,15 @@ class CRUDRepository
       }
 
     } else {
-      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
   }
 
   public function getById(int $id)
   {
 
-    if (static::TABLE && static::ID) {
-      $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE ' . static::ID . ' = :id;';
+    if (static::TABLE && static::PK) {
+      $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
       $stmt = $this->conn->prepare($Sql);
       $stmt->bindValue(':id', $id, PDO::PARAM_INT);
       try {
@@ -124,7 +128,7 @@ class CRUDRepository
       }
 
     } else {
-      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
 
     }
   }
@@ -132,8 +136,8 @@ class CRUDRepository
   public function delete(int $id)
   {
 
-    if (static::TABLE && static::ID) {
-      $Sql = 'DELETE FROM ' . static::TABLE . ' WHERE ' . static::ID . ' = :id;';
+    if (static::TABLE && static::PK) {
+      $Sql = 'DELETE FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
       $this->conn->beginTransaction();
       try {
         $stmt = $this->conn->prepare($Sql);
@@ -160,7 +164,66 @@ class CRUDRepository
         ]);
       }
     } else {
-      throw new Exception('Erro: ' . ConstantsUtil::MSG_ERRO_CONSTANTES_DB);
+      throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
+  }
+
+  public function update(int $id, object $object)
+  {
+
+    if (static::TABLE && static::PK && static::COLUMNS) {
+
+      $columnValue = '';
+      foreach (static::COLUMNS as $column) {
+
+        $columnValue .= $column . ' = ' . ':' . $column . ', ';
+
+
+      }
+      $columnValue = rtrim($columnValue, ', ');
+
+      $Sql = "UPDATE " . static::TABLE . " SET {$columnValue} WHERE " . static::PK . " = :id";
+
+      $this->conn->beginTransaction();
+      try {
+
+        $stmt = $this->conn->prepare($Sql);
+
+        foreach (static::COLUMNS as $column) {
+
+          $method = 'get' . ucfirst($column);
+          $value = $object->$method();
+
+          $type = PDO::PARAM_STR;
+
+          if (is_int($value)) {
+            $type = PDO::PARAM_INT;
+          } elseif (is_bool($value)) {
+            $type = PDO::PARAM_BOOL;
+          } elseif (is_null($value)) {
+            $type = PDO::PARAM_NULL;
+          }
+
+          $stmt->bindValue(':' . $column, $value, $type);
+        }
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $this->conn->commit();
+      } catch (PDOException $e) {
+        $this->conn->rollBack();
+        throw new Exception($e->getMessage());
+      }
+
+      if ($stmt->rowCount() > 0) {
+        http_response_code(200);
+        return true;
+      } else {
+        http_response_code(401);
+        return false;
+      }
+    } else {
+      throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
+    }
+
   }
 }

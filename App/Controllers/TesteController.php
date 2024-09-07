@@ -22,7 +22,7 @@ class TesteController
     $user->setNome($data['nome']);
     $user->setIdade($data['idade']);
     $repo = new UsuarioRepository();
-    $repo->save($user);
+    $repo->update(RoutesUtil::getIdRequest(), $user);
     /*$data = $repo->getAll();
     JsonUtil::jsonResponse($data);
     JsonUtil::jsonResponse($data);*/
@@ -43,7 +43,7 @@ class TesteController
     $usuario->setNome($data['nome']);
     $usuario->setIdade($data['idade']);
     $new = new UsuarioRepository();
-    $new->create($usuario);
+    $new->save($usuario);
   }
   public function update()
   {
