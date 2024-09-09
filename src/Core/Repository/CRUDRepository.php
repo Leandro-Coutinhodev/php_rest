@@ -10,7 +10,7 @@ use Support\Utils\JsonUtil;
 class CRUDRepository
 {
 
-  protected $DB;
+  protected PDO $DB;
 
 
   public function save(object $object)
