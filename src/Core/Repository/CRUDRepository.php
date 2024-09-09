@@ -10,7 +10,7 @@ use Support\Utils\JsonUtil;
 class CRUDRepository
 {
 
-  protected $conn;
+  protected $DB;
 
 
   public function save(object $object)
@@ -30,10 +30,10 @@ class CRUDRepository
       $valparams = ':' . implode(', :', static::COLUMNS);
 
       $Sql = "INSERT INTO " . static::TABLE . " ({$columns}) VALUES ({$valparams});";
-      $this->conn->beginTransaction();
+      $this->DB->beginTransaction();
       try {
 
-        $stmt = $this->conn->prepare($Sql);
+        $stmt = $this->DB->prepare($Sql);
         foreach (static::COLUMNS as $column) {
 
           $method = 'get' . ucfirst($column);
@@ -54,10 +54,10 @@ class CRUDRepository
         }
 
         $stmt->execute();
-        $this->conn->commit();
+        $this->DB->commit();
 
       } catch (PDOException $e) {
-        $this->conn->rollBack();
+        $this->DB->rollBack();
         throw new Exception('Erro: ' . $e->getMessage());
       }
 
@@ -81,7 +81,7 @@ class CRUDRepository
 
       try {
 
-        $result = $this->conn->query($Sql);
+        $result = $this->DB->query($Sql);
       } catch (PDOException $e) {
 
         throw new Exception($e->getMessage());
@@ -105,7 +105,7 @@ class CRUDRepository
 
     if (static::TABLE && static::PK) {
       $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
-      $stmt = $this->conn->prepare($Sql);
+      $stmt = $this->DB->prepare($Sql);
       $stmt->bindValue(':id', $id, PDO::PARAM_INT);
       try {
 
@@ -138,16 +138,16 @@ class CRUDRepository
 
     if (static::TABLE && static::PK) {
       $Sql = 'DELETE FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
-      $this->conn->beginTransaction();
+      $this->DB->beginTransaction();
       try {
-        $stmt = $this->conn->prepare($Sql);
+        $stmt = $this->DB->prepare($Sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
-        $this->conn->commit();
+        $this->DB->commit();
       } catch (PDOException $e) {
 
-        $this->conn->rollBack();
+        $this->DB->rollBack();
         throw new Exception($e->getMessage());
 
       }
@@ -184,10 +184,10 @@ class CRUDRepository
 
       $Sql = "UPDATE " . static::TABLE . " SET {$columnValue} WHERE " . static::PK . " = :id";
 
-      $this->conn->beginTransaction();
+      $this->DB->beginTransaction();
       try {
 
-        $stmt = $this->conn->prepare($Sql);
+        $stmt = $this->DB->prepare($Sql);
 
         foreach (static::COLUMNS as $column) {
 
@@ -208,9 +208,9 @@ class CRUDRepository
         }
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-        $this->conn->commit();
+        $this->DB->commit();
       } catch (PDOException $e) {
-        $this->conn->rollBack();
+        $this->DB->rollBack();
         throw new Exception($e->getMessage());
       }
 

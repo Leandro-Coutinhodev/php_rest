@@ -4,7 +4,7 @@ namespace App\Repository;
 use App\Models\UserModel;
 use PDO;
 use PDOException;
-use Core\Database\ConnectionDb;
+use Core\DB\Connection;
 use Core\Repository\CRUDRepository;
 use Support\Utils\ConstantsUtil;
 
@@ -17,14 +17,14 @@ class UsuarioRepository extends CRUDRepository
   public function __construct()
   {
 
-    $this->conn = (new ConnectionDb())->getConnection();
+    $this->DB = (new Connection())->getConnection();
   }
 
   public function create(UserModel $user)
   {
 
     $Sql = 'INSERT INTO ' . self::TABLE . ' (nome, idade) VALUES (:nome, :idade);';
-    $stmt = $this->conn->prepare($Sql);
+    $stmt = $this->DB->prepare($Sql);
     $stmt->bindValue(':nome', $user->getNome(), PDO::PARAM_STR);
     $stmt->bindValue(':idade', $user->getIdade(), PDO::PARAM_INT);
 

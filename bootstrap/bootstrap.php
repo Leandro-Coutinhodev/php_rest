@@ -1,18 +1,16 @@
 <?php
 
+require_once 'require.php';
+
 define('DS', DIRECTORY_SEPARATOR);
 define('DIR_APP', dirname(__DIR__));
 
+$init = Dotenv\Dotenv::createUnsafeMutable(DIR_APP);
+$init->load();
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'rest');
-define('DB_USER', 'postgres');
-define('DB_PASS', 'root');
+define('DB', $_ENV['DB']);
+define('DB_HOST', $_ENV['DB_HOST']);
+define('DB_NAME', $_ENV['DB_NAME']);
+define('DB_USER', $_ENV['DB_USER']);
+define('DB_PASS', $_ENV['DB_PASS']);
 
-
-const AUTOLOAD_DIR = __DIR__ . '/../vendor/autoload.php';
-if (file_exists(AUTOLOAD_DIR)) {
-  include AUTOLOAD_DIR;
-} else {
-  echo 'erro ao incluir bootstrap';
-}
