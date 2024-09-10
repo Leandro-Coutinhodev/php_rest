@@ -1,7 +1,9 @@
 <?php
 
 namespace Core\Routes;
+use Core\Container\Container;
 use DirectoryIterator;
+use Exception;
 use Support\Utils\RoutesUtil;
 
 
@@ -35,27 +37,6 @@ abstract class Routes
     self::$routes['DELETE'][$uri] = $action;
   }
 
-  public static function setRoutes()
-  {
-    $directory = __DIR__ . '/../../../App/Routes';
-
-    foreach (new DirectoryIterator($directory) as $file) {
-
-      if ($file->isFile() && $file->getExtension() === 'php') {
-
-        $class = 'App\\Routes\\' . $file->getBasename('.php');
-
-        if (is_subclass_of($class, HttpRoutes::class)) {
-
-          $classinstance = new $class();
-          $classinstance->registerRoutes();
-
-        }
-
-      }
-    }
-
-  }
 
   public static function dispatch()
   {
@@ -70,8 +51,15 @@ abstract class Routes
       $action = self::$routes[$method][$uri];
       $controller = $action[0];
       $actionMethod = $action[1];
-      $controllerInstance = new $controller();
-      $controllerInstance->$actionMethod();
+
+      global $container;
+      $controllerInstance = $container->getContainer()->get($controller);
+      if (method_exists($controllerInstance, $actionMethod)) {
+
+        $controllerInstance->$actionMethod();
+      } else {
+        throw new Exception('M´rtodo não encontrado.');
+      }
 
 
     } else {

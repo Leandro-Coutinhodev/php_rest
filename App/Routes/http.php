@@ -12,20 +12,17 @@ class http implements HttpRoutes
   {
 
     //REQUISIÇÕES GET AQUI:
-    Routes::get('/usuarios/listar', [UsuarioController::class, 'retornarUsuarios']);
-    Routes::get('/usuarios/listar/{id}', [UsuarioController::class, 'retornarUsuario']);
-    Routes::put('/usuarios/atualizar/{id}', [TesteController::class, 'index']);
+
+    Routes::get('/', [TesteController::class, 'index']);
 
 
     //REQUISIÇÕES POST AQUI:
-    Routes::post('/usuarios/criar', [UsuarioController::class, 'novoUsuario']);
-    Routes::post('/usuarios/salvar', [TesteController::class, 'new']);
+
 
 
     //REQUISIÇÕES PUT AQUI:
-    Routes::put('/teste/lista', [TesteController::class, 'update']);
+
 
     //REQUISIÇÕES DELETE AQUI:
-    Routes::delete('/usuarios/excluir/{id}', [UsuarioController::class, 'excluirUsuario']);
   }
 }

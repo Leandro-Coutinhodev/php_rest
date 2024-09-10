@@ -2,11 +2,12 @@
 
 namespace Core\DB;
 use Exception;
+use PDO;
 
 class Connection
 {
 
-  private $pdo;
+  private PDO $pdo;
 
   public function __construct()
   {
@@ -39,7 +40,7 @@ class Connection
 
     try {
 
-      $this->pdo = new \PDO($dsn, DB_USER, DB_PASS);
+      $this->pdo = new PDO($dsn, DB_USER, DB_PASS);
     } catch (\PDOException $e) {
 
       throw new Exception('error:' . $e->getMessage());
