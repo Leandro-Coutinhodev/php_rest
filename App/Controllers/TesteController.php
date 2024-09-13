@@ -1,37 +1,28 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\UserModel;
-use App\Repository\UserRepository;
-use DI\Attribute\Inject;
-use Support\Utils\JsonUtil;
+use Core\Adapter\Request;
+use Core\Attributes\RequestMapping;
 use Support\Utils\RoutesUtil;
 
 class TesteController
 {
-  private UserModel $user;
-  private UserRepository $repo;
-
-  #[Inject]
-  public function __construct(
-    UserModel $user,
-    UserRepository $repo
-  ) {
-
-
-    $this->user = $user;
-    $this->repo = $repo;
-  }
+  #[RequestMapping('/teste', 'GET')]
   public function index()
   {
-
-    $this->user->setNome('Leandro');
-    echo "Funcionou com sucesso!" . $this->user->getNome();
+    $data = Request::requestBody();
+    return Request::response($data);
   }
 
+  #[RequestMapping('/testando/aqui', 'POST')]
   public function teste()
   {
-    $data = $this->repo->getById(RoutesUtil::getIdRequest());
-    JsonUtil::jsonResponse([$data]);
+    echo "funcionando";
+  }
+
+  #[RequestMapping('/testando/url/{id}', 'PUT')]
+  public function update()
+  {
+    echo 'url:' . RoutesUtil::getIdRequest();
   }
 }

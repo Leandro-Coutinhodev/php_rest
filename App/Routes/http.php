@@ -13,7 +13,7 @@ class http implements HttpRoutes
 
     //REQUISIÇÕES GET AQUI:
 
-    Routes::get('/', [TesteController::class, 'index']);
+    //Routes::get('/teste/metodo', [TesteController::class, 'index']);
 
 
     //REQUISIÇÕES POST AQUI:

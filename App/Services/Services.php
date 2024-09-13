@@ -16,8 +16,6 @@ class Services
   {
     return [
       UserModel::class => autowire(UserModel::class),
-      TesteController::class => autowire(TesteController::class),
-      HttpRoutes::class => autowire(UserRoutes::class),
       UserRepository::class => autowire(UserRepository::class),
 
 
