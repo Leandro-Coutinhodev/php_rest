@@ -1,39 +1,56 @@
 <?php
 
 namespace Support\Utils;
+use Core\Routes\Routes;
 
 class RoutesUtil
 {
-
-
-
-  public static function getIdRequest()
+  protected static $urlParams = [];
+  public static function getParameterRequest(...$params)
   {
-    $uri = $_SERVER['REQUEST_URI'];
-    $uriparts = explode('/', trim($uri, '/'));
-    if (count($uriparts) > 1 && end($uriparts) != null) {
-      try {
-        return intval(end($uriparts));
-      } catch (\Exception $e) {
-        throw new \Exception($e->getMessage());
+    $result = [];
+    foreach ($params as $param) {
+      if (is_string($param) && isset(self::$urlParams[$param])) {
+        $result[$param] = self::$urlParams[$param] ?? null;
       }
     }
+    return count($result) === 1 ? reset($result) : $result;
   }
-
 
   public static function getUriRequest()
   {
-    $uri = $_SERVER['REQUEST_URI'];
-    $uriparts = explode('/', trim($uri, '/'));
-    if (count($uriparts) > 2 && end($uriparts) != null) {
+    $routes = array_keys(Routes::$routes[self::getMethodRequest()]);
 
-      $replace = str_replace('/' . end($uriparts), '/{id}', $uri);
-      return $replace;
+    $uri = trim($_SERVER['REQUEST_URI'], '/');
+    $uriparts = explode('/', $uri);
 
-    } else {
-      return $uri;
+    foreach ($routes as $route) {
+      $routeParts = explode('/', trim($route, '/'));
+      if (count($uriparts) !== count($routeParts)) {
+        continue;
+      }
+
+      $matched = true;
+      self::$urlParams = [];
+
+      foreach ($routeParts as $index => $routePart) {
+        if (preg_match('/\{(.+?)\}/', $routePart, $matches)) {
+          //Seta os parametros recebidos pela url que serão utilizados no controller através do adaptador Http que faz uso do método getParameterRequest 
+          self::$urlParams[$matches[1]] = $uriparts[$index] ?? null;
+          $uriparts[$index] = $routePart;
+        } elseif ($routePart !== $uriparts[$index]) {
+          $matched = false;
+          break;
+        }
+      }
+
+      if ($matched) {
+        return '/' . implode('/', $uriparts);
+      }
     }
 
+    // Se nenhuma rota corresponder, retorna a URI original
+    return $uri;
   }
 
   public static function getMethodRequest()

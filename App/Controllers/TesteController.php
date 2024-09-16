@@ -1,28 +1,36 @@
 <?php
 
 namespace App\Controllers;
+
+use App\Models\UserModel;
+use App\Repository\UserRepository;
+use Core\Adapter\Http;
 use Core\Adapter\Request;
 use Core\Attributes\RequestMapping;
-use Support\Utils\RoutesUtil;
+use DI\Attribute\Inject;
 
 class TesteController
 {
-  #[RequestMapping('/teste', 'GET')]
-  public function index()
+
+  #[Inject]
+  private UserRepository $userRepository;
+
+  #[RequestMapping('/usuarios/{user}/lista/{id}', 'GET')]
+  public function listarUsuarios()
   {
-    $data = Request::requestBody();
+    $parameter = Http::getUrlParameter('user', 'id');
+    $data = $this->userRepository->getAll();
     return Request::response($data);
   }
 
-  #[RequestMapping('/testando/aqui', 'POST')]
-  public function teste()
+  #[RequestMapping('/usuarios/salvar', 'POST')]
+  public function salvarUsuario()
   {
-    echo "funcionando";
-  }
+    $data = Request::requestBody();
+    $user = new UserModel;
+    $user->setIdade($data['idade']);
+    $user->setNome($data['nome']);
+    $this->userRepository->save($user);
 
-  #[RequestMapping('/testando/url/{id}', 'PUT')]
-  public function update()
-  {
-    echo 'url:' . RoutesUtil::getIdRequest();
   }
 }

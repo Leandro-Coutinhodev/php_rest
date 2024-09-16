@@ -17,4 +17,9 @@ class UserRepository extends CRUDRepository
   {
     $this->DB = $connection->getConnection();
   }
+
+  public function teste($var)
+  {
+    echo $var;
+  }
 }

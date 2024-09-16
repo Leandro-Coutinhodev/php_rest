@@ -15,6 +15,7 @@ class Container
 
     $container = new ContainerBuilder();
     $container->useAutowiring(true);
+    $container->useAttributes(true);
     $container->addDefinitions($services);
     $this->container = $container->build();
 

@@ -41,7 +41,7 @@ abstract class Routes
   public static function dispatch()
   {
 
-    $uri = RoutesUtil::getUriRequest();
+    echo $uri = RoutesUtil::getUriRequest();
     $method = RoutesUtil::getMethodRequest();
 
 

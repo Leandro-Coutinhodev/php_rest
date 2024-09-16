@@ -1,6 +1,7 @@
 <?php
 
 namespace Core\Repository;
+use Core\Adapter\Request;
 use Exception;
 use PDO;
 use PDOException;
@@ -122,7 +123,7 @@ class CRUDRepository
         return $result;
       } else {
 
-        JsonUtil::jsonResponse([
+        Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNO_NAO_AFETADO
         ]);
       }
@@ -154,12 +155,12 @@ class CRUDRepository
 
       if ($stmt->rowCount() > 0) {
 
-        JsonUtil::jsonResponse([
+        Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNO_DELETADO_SUCESSO
         ]);
       } else {
 
-        JsonUtil::jsonResponse([
+        Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNOI_DELETADO_ERRO
         ]);
       }

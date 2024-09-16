@@ -15,7 +15,8 @@ class Services
   public function getServices()
   {
     return [
-      UserModel::class => autowire(UserModel::class),
+        /*UserModel::class => autowire(UserModel::class),
+        TesteController::class => autowire(TesteController::class),*/
       UserRepository::class => autowire(UserRepository::class),
 
 
