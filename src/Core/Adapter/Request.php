@@ -2,6 +2,7 @@
 
 namespace Core\Adapter;
 use Support\Utils\JsonUtil;
+use Support\Utils\RoutesUtil;
 
 class Request
 {
@@ -10,8 +11,14 @@ class Request
     return JsonUtil::requestBody();
   }
 
-  public static function response(array $data, int $status = null)
+  public static function response($data = null, int $status = null)
   {
     JsonUtil::response($data, $status);
+  }
+
+  public static function getUrlParameter(...$params)
+  {
+
+    return RoutesUtil::getParameterRequest(...$params);
   }
 }

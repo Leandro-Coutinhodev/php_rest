@@ -18,14 +18,16 @@ class JsonUtil
       return $data;
   }
 
-  public static function response(array $data, int $status = null)
+  public static function response($data, int $status = null)
   {
 
     try {
+      header('Content-Type: application/json');
+      if ($data != null) {
 
-      echo json_encode($data);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+      }
       http_response_code($status);
-
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }

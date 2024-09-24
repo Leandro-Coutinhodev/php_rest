@@ -16,6 +16,7 @@ class Services
     return [
       HttpRoutes::class => autowire(http::class),
       Connection::class => autowire(Connection::class),
+      CRUDRepository::class => autowire(CRUDRepository::class),
     ];
   }
 }

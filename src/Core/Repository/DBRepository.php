@@ -1,47 +1,47 @@
 <?php
 
 namespace Core\Repository;
+
 use Core\Adapter\Request;
+use Core\DB\Connection;
+use DI\Attribute\Inject;
 use Exception;
 use PDO;
 use PDOException;
 use Support\Utils\ConstantsUtil;
-use Support\Utils\JsonUtil;
 
-class CRUDRepository
+class DBRepository
 {
-
   protected PDO $DB;
+  protected string $table;
+  protected string $pk;
+  protected array $columns;
 
+  public function __construct(string $table, string $pk, array $columns)
+  {
+
+    $this->DB = (new Connection())->getConnection();
+    $this->table = $table;
+    $this->pk = $pk;
+    $this->columns = $columns;
+  }
 
   public function save(object $object)
   {
-    // Trabalhar aqui posteriormente
-    if (static::TABLE && static::COLUMNS) {
+    if ($this->table && $this->columns) {
+      $columns = implode(', ', $this->columns);
+      $valparams = ':' . implode(', :', $this->columns);
 
-      /* $columns = '';
-       $valparams = '';*/
-      /*foreach (static::COLUMNS as $column) {
-        $columns .= ', ' . $column;
-        $valparams .= ', :' . $column;
-      }*/
-
-
-      $columns = implode(', ', static::COLUMNS);
-      $valparams = ':' . implode(', :', static::COLUMNS);
-
-      $Sql = "INSERT INTO " . static::TABLE . " ({$columns}) VALUES ({$valparams});";
+      $Sql = "INSERT INTO " . $this->table . " ({$columns}) VALUES ({$valparams});";
       $this->DB->beginTransaction();
+
       try {
-
         $stmt = $this->DB->prepare($Sql);
-        foreach (static::COLUMNS as $column) {
-
+        foreach ($this->columns as $column) {
           $method = 'get' . ucfirst($column);
           $value = $object->$method();
 
           $type = PDO::PARAM_STR;
-
           if (is_int($value)) {
             $type = PDO::PARAM_INT;
           } elseif (is_bool($value)) {
@@ -51,12 +51,10 @@ class CRUDRepository
           }
 
           $stmt->bindValue(':' . $column, $value, $type);
-
         }
 
         $stmt->execute();
         $this->DB->commit();
-
       } catch (PDOException $e) {
         $this->DB->rollBack();
         throw new Exception('Erro: ' . $e->getMessage());
@@ -72,30 +70,24 @@ class CRUDRepository
     } else {
       throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
-
   }
+
   public function getAll()
   {
-
-    if (static::TABLE) {
-      $Sql = 'SELECT * FROM ' . static::TABLE . ';';
+    if ($this->table) {
+      $Sql = 'SELECT * FROM ' . $this->table . ';';
 
       try {
-
         $result = $this->DB->query($Sql);
       } catch (PDOException $e) {
-
         throw new Exception($e->getMessage());
       }
 
       if ($result->rowCount() > 0) {
-
         return $result->fetchAll(PDO::FETCH_ASSOC);
       } else {
-
         echo ConstantsUtil::MSG_RETORNO_NAO_AFETADO;
       }
-
     } else {
       throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
@@ -103,63 +95,51 @@ class CRUDRepository
 
   public function getById(int $id)
   {
-
-    if (static::TABLE && static::PK) {
-      $Sql = 'SELECT * FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
+    if ($this->table && $this->pk) {
+      $Sql = 'SELECT * FROM ' . $this->table . ' WHERE ' . $this->pk . ' = :id;';
       $stmt = $this->DB->prepare($Sql);
       $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-      try {
 
+      try {
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
       } catch (PDOException $e) {
-
         throw new Exception($e->getMessage());
       }
 
       if (count($result) > 0) {
-
         return $result;
       } else {
-
         Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNO_NAO_AFETADO
         ]);
       }
-
     } else {
       throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
-
     }
   }
 
   public function delete(int $id)
   {
-
-    if (static::TABLE && static::PK) {
-      $Sql = 'DELETE FROM ' . static::TABLE . ' WHERE ' . static::PK . ' = :id;';
+    if ($this->table && $this->pk) {
+      $Sql = 'DELETE FROM ' . $this->table . ' WHERE ' . $this->pk . ' = :id;';
       $this->DB->beginTransaction();
+
       try {
         $stmt = $this->DB->prepare($Sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-
         $stmt->execute();
         $this->DB->commit();
       } catch (PDOException $e) {
-
         $this->DB->rollBack();
         throw new Exception($e->getMessage());
-
       }
 
       if ($stmt->rowCount() > 0) {
-
         Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNO_DELETADO_SUCESSO
         ]);
       } else {
-
         Request::response([
           'retorno' => ConstantsUtil::MSG_RETORNOI_DELETADO_ERRO
         ]);
@@ -171,32 +151,23 @@ class CRUDRepository
 
   public function update(int $id, object $object)
   {
-
-    if (static::TABLE && static::PK && static::COLUMNS) {
-
+    if ($this->table && $this->pk && $this->columns) {
       $columnValue = '';
-      foreach (static::COLUMNS as $column) {
-
-        $columnValue .= $column . ' = ' . ':' . $column . ', ';
-
-
+      foreach ($this->columns as $column) {
+        $columnValue .= $column . ' = :' . $column . ', ';
       }
       $columnValue = rtrim($columnValue, ', ');
 
-      $Sql = "UPDATE " . static::TABLE . " SET {$columnValue} WHERE " . static::PK . " = :id";
+      $Sql = "UPDATE " . $this->table . " SET {$columnValue} WHERE " . $this->pk . " = :id";
 
       $this->DB->beginTransaction();
       try {
-
         $stmt = $this->DB->prepare($Sql);
-
-        foreach (static::COLUMNS as $column) {
-
+        foreach ($this->columns as $column) {
           $method = 'get' . ucfirst($column);
           $value = $object->$method();
 
           $type = PDO::PARAM_STR;
-
           if (is_int($value)) {
             $type = PDO::PARAM_INT;
           } elseif (is_bool($value)) {
@@ -225,6 +196,5 @@ class CRUDRepository
     } else {
       throw new Exception(ConstantsUtil::MSG_ERROR_CONSTANTS_DB);
     }
-
   }
 }
