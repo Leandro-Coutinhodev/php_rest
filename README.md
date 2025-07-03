@@ -1,0 +1,1 @@
+- Framework desenvolvido para criação de APIs REST em PHP puro
